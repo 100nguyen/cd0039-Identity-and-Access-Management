@@ -83,7 +83,7 @@ def create_drink(token):
 
         drink = Drink(
             title = body.get('title', None),
-            recipe = body.get('recipe', None)
+            recipe = json.dumps(body.get('recipe', None))
         )
         
         drink.insert()
@@ -117,12 +117,20 @@ def update_drink(token, id):
     if drink is None:
         abort(404)
 
-    drink.title = body.get('title', None),
-    drink.recipe = body.get('recipe', None)
+    body = request.get_json()
+
+    req_title = body.get('title', None)
+    req_recipe = body.get('recipe', None)
 
     try:
-        drink.update()
+        if req_title is not None:
+            drink.title = req_title
+            drink.update()
 
+        if req_recipe is not None:
+            drink.recipe = json.dumps(req_recipe)
+            drink.update()
+            
     except Exception:
         abort(422)
 
